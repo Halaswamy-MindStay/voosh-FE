@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie'
 
 export const fetchTodosRequest = () => ({ type: 'FETCH_TODOS_REQUEST' });
 
@@ -29,8 +30,13 @@ export const updateTodo = (todo) => ({
 
 export const fetchTodos = () => async (dispatch) => {
     dispatch(fetchTodosRequest());
+    const token = Cookies.get('token')
     try {
-        const response = await axios.get('http://localhost:4000/todo/getTodo');
+        const response = await axios.get('http://localhost:4000/todo/getTodo', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         dispatch(fetchTodosSuccess(response.data.todoTasks));
     } catch (error) {
         dispatch(fetchTodosFailure(error.message));

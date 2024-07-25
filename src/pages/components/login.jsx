@@ -1,39 +1,43 @@
+// src/components/Login.jsx
 import { useState } from "react";
-import axios from 'axios'
+import axios from 'axios';
 import Header from "../header/header";
-import '../../styles/login.css'
+import '../../styles/login.css';
 import { Link, useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
+import { auth, googleProvider } from '../../fireBase/firebase';
+import { signInWithPopup } from "firebase/auth";
 
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+        const token = Cookies.get('token');
         if (email && password) {
             try {
                 const res = await axios.post('http://localhost:4000/user/login', { email, password });
+
+                Cookies.set('token', res.data.token);
                 console.log(res.data);
-                Cookies.set('token', res.data.token)
                 if (res.data.message === 'User Found') {
-                    navigate('/landingPage')
-                    alert('Login successfully')
+                    navigate('/landingPage');
+                    alert('Login successfully');
+                } else if (res.data.message === 'User not found') {
+                    alert('User Not Found');
+                    navigate('/signUp');
                 }
-                else if (res.data.message === 'User not found') {
-                    alert('User Not Found')
-                    navigate('/signUp')
+                else if (res.data.message === 'Wrong password') {
+                    alert('Enter valid password');
+                    setPassword('')
                 }
-
-
             } catch (error) {
                 console.error(error);
-                alert('Something went wrong')
-                navigate('/')
+                alert('Something went wrong');
+                navigate('/');
             }
         } else {
             alert('Please fill in all required details');
@@ -48,8 +52,19 @@ const Login = () => {
                 document.querySelector("[name=password]").focus();
             }
         }
-    }
+    };
 
+    const handleGoogleLogin = async () => {
+        try {
+            const res = await signInWithPopup(auth, googleProvider);
+            const idToken = await res.user.getIdToken();
+            const result = await axios.post('http://localhost:4000/user/googlelogin', { idToken });
+            Cookies.set('token', result.data.token);
+            navigate('/landingPage');
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
 
     return (
         <div className="login">
@@ -88,15 +103,15 @@ const Login = () => {
                             Don't have an account? <Link className="no-underline" to='signUp'>Signup</Link>
                         </p>
                         <div className="flex justify-center">
-                            <button className="flex justify-center items-center border border-blue-600 bg-blue-600 text-white px-4 py-1 rounded mt-2">
+                            <button className="flex justify-center items-center border border-blue-600 bg-blue-600 text-white px-4 py-1 rounded mt-2"
+                                onClick={handleGoogleLogin}
+                            >
                                 Login with <span className="font-bold ml-2">Google</span>
                             </button>
                         </div>
                     </div>
                 </div>
             </section>
-
-
         </div>
     );
 }

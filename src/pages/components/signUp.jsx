@@ -4,6 +4,8 @@ import Header from "../header/header";
 import '../../styles/signUp.css'
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie'
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../../fireBase/firebase";
 
 const SignUp = () => {
 
@@ -33,13 +35,11 @@ const SignUp = () => {
                         lastName,
                         email,
                         password,
-                        firebaseUid: '',
                     })
                     console.log(response)
                     if (response.data.message === 'User Created') {
                         alert('User created successfully')
-                        Cookies.set('token', response.data.token)
-                        navigate('/landingPage')
+                        navigate('/')
                     } else if (response.data.message === 'User already exists') {
                         alert('User already exists')
                         navigate('/')
@@ -54,6 +54,21 @@ const SignUp = () => {
 
         }
     }
+
+    const handleGoogleSignUp = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const idToken = await result.user.getIdToken();
+
+            const response = await axios.post('http://localhost:4000/user/googlelogin', { idToken });
+
+            Cookies.set('token', response.data.token);
+            navigate('/landingPage');
+        } catch (error) {
+            console.error("Error during Google sign-up:", error);
+            alert('Error signing up with Google');
+        }
+    };
 
     const handleFirstNameChange = (e) => {
         const value = e.target.value;
@@ -108,7 +123,9 @@ const SignUp = () => {
                         </form>
                         <p className="text-center mb-3">Already have an account ? <Link className="no-underline" to='/'>Login</Link></p>
                         <div className="flex justify-center">
-                            <button className="flex justify-center items-center border border-blue-600 bg-blue-600 text-white px-4 py-1 rounded mt-2">
+                            <button className="flex justify-center items-center border border-blue-600 bg-blue-600 text-white px-4 py-1 rounded mt-2"
+                                onClick={handleGoogleSignUp}
+                            >
                                 Signup with <span className="font-bold ml-2">Google</span>
                             </button>
                         </div>
