@@ -32,7 +32,7 @@ export const fetchTodos = () => async (dispatch) => {
     dispatch(fetchTodosRequest());
     const token = Cookies.get('token')
     try {
-        const response = await axios.get('http://localhost:4000/todo/getTodo', {
+        const response = await axios.get('https://voosh-be-2.onrender.com/todo/getTodo', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -45,7 +45,7 @@ export const fetchTodos = () => async (dispatch) => {
 
 export const createTodo = (todo) => async (dispatch) => {
     try {
-        const response = await axios.post('http://localhost:4000/todo/addTodo', todo);
+        const response = await axios.post('https://voosh-be-2.onrender.com/todo/addTodo', todo);
         dispatch(addTodo(response.data.todo));
     } catch (error) {
         console.error(error);
@@ -54,7 +54,7 @@ export const createTodo = (todo) => async (dispatch) => {
 
 export const removeTodo = (id) => async (dispatch) => {
     try {
-        await axios.delete(`http://localhost:4000/todo/deleteTodo/${id}`);
+        await axios.delete(`https://voosh-be-2.onrender.com/todo/deleteTodo/${id}`);
         dispatch(deleteTodo(id));
     } catch (error) {
         console.error(error);
@@ -63,7 +63,7 @@ export const removeTodo = (id) => async (dispatch) => {
 
 export const modifyTodo = (id, updates) => async (dispatch) => {
     try {
-        const response = await axios.put(`http://localhost:4000/todo/updateTodo/${id}`, updates);
+        const response = await axios.put(`https://voosh-be-2.onrender.com/todo/updateTodo/${id}`, updates);
         dispatch(updateTodo(response.data.updatedTodo));
     } catch (error) {
         console.error(error);
@@ -72,7 +72,7 @@ export const modifyTodo = (id, updates) => async (dispatch) => {
 
 export const dragValTodo = (id, todoStatus) => async (dispatch) => {
     try {
-        const response = await axios.put(`http://localhost:4000/todo/updateTodo/${id}`, { todoStatus });
+        const response = await axios.put(`https://voosh-be-2.onrender.com/todo/updateTodo/${id}`, { todoStatus });
         dispatch(updateTodo(response.data.updatedTodo));
     } catch (error) {
         console.error(error);

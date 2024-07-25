@@ -19,7 +19,7 @@ const Login = () => {
         const token = Cookies.get('token');
         if (email && password) {
             try {
-                const res = await axios.post('http://localhost:4000/user/login', { email, password });
+                const res = await axios.post('https://voosh-be-2.onrender.com/user/login', { email, password });
 
                 Cookies.set('token', res.data.token);
                 console.log(res.data);
@@ -58,7 +58,7 @@ const Login = () => {
         try {
             const res = await signInWithPopup(auth, googleProvider);
             const idToken = await res.user.getIdToken();
-            const result = await axios.post('http://localhost:4000/user/googlelogin', { idToken });
+            const result = await axios.post('https://voosh-be-2.onrender.com/user/googlelogin', { idToken });
             Cookies.set('token', result.data.token);
             navigate('/landingPage');
         } catch (error) {

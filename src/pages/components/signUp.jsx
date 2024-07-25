@@ -30,7 +30,7 @@ const SignUp = () => {
             else {
 
                 try {
-                    const response = await axios.post('http://localhost:4000/user/signUp', {
+                    const response = await axios.post('https://voosh-be-2.onrender.com/user/signUp', {
                         firstName,
                         lastName,
                         email,
@@ -60,7 +60,7 @@ const SignUp = () => {
             const result = await signInWithPopup(auth, googleProvider);
             const idToken = await result.user.getIdToken();
 
-            const response = await axios.post('http://localhost:4000/user/googlelogin', { idToken });
+            const response = await axios.post('https://voosh-be-2.onrender.com/user/googlelogin', { idToken });
 
             Cookies.set('token', response.data.token);
             navigate('/landingPage');
