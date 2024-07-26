@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useLayoutEffect, useState } from "react";
 import '../styles/update.css'
 import { useDispatch } from "react-redux";

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Header from "../header/header";
-import axios from "axios";
 import Update from "../../utils/editDetailsPopUp";
 import DetailsPopUp from "../../utils/detailsPopUp";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
@@ -147,7 +146,6 @@ const LandingPage = () => {
     const [counter, setCounter] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
     const [sortOption, setSortOption] = useState("recent");
-    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async () => {
         const newTask = {
@@ -201,9 +199,6 @@ const LandingPage = () => {
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     return (
         <DndProvider backend={HTML5Backend}>

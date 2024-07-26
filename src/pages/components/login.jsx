@@ -16,7 +16,6 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const token = Cookies.get('token');
         if (email && password) {
             try {
                 const res = await axios.post('https://voosh-be-2.onrender.com/user/login', { email, password });
