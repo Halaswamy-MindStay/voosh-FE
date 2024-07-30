@@ -7,6 +7,8 @@ import Cookies from 'js-cookie'
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../fireBase/firebase";
 
+// const api = process.env.REACT_APP_API
+const api ='http://localhost:4000'
 const SignUp = () => {
 
     const [firstName, setFirstName] = useState('')
@@ -30,11 +32,14 @@ const SignUp = () => {
             else {
 
                 try {
-                    const response = await axios.post('https://voosh-be-2.onrender.com/user/signUp', {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const token = await userCredential.user.getIdToken();
+                    const response = await axios.post(`${api}/user/signUp`, {
                         firstName,
                         lastName,
                         email,
                         password,
+                        token
                     })
                     console.log(response)
                     if (response.data.message === 'User Created') {
@@ -60,7 +65,7 @@ const SignUp = () => {
             const result = await signInWithPopup(auth, googleProvider);
             const idToken = await result.user.getIdToken();
 
-            const response = await axios.post('https://voosh-be-2.onrender.com/user/googlelogin', { idToken });
+            const response = await axios.post(`${api}/user/googlelogin`, { idToken });
 
             Cookies.set('token', response.data.token);
             navigate('/landingPage');

@@ -1,12 +1,14 @@
-// src/components/Login.jsx
 import { useState } from "react";
 import axios from 'axios';
 import Header from "../header/header";
 import '../../styles/login.css';
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
-import { auth, googleProvider } from '../../fireBase/firebase';
+import { auth, googleProvider } from '../../fireBase/firebase'
 import { signInWithPopup } from "firebase/auth";
+
+// const api = process.env.REACT_APP_API
+const api = 'http://localhost:4000'
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -18,7 +20,9 @@ const Login = () => {
         e.preventDefault();
         if (email && password) {
             try {
-                const res = await axios.post('https://voosh-be-2.onrender.com/user/login', { email, password });
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const token = await userCredential.user.getIdToken();
+                const res = await axios.post(`${api}/user/login`, { email, password, token });
 
                 Cookies.set('token', res.data.token);
                 console.log(res.data);
@@ -28,8 +32,7 @@ const Login = () => {
                 } else if (res.data.message === 'User not found') {
                     alert('User Not Found');
                     navigate('/signUp');
-                }
-                else if (res.data.message === 'Wrong password') {
+                } else if (res.data.message === 'Wrong password') {
                     alert('Enter valid password');
                     setPassword('')
                 }
@@ -55,13 +58,16 @@ const Login = () => {
 
     const handleGoogleLogin = async () => {
         try {
-            const res = await signInWithPopup(auth, googleProvider);
-            const idToken = await res.user.getIdToken();
-            const result = await axios.post('https://voosh-be-2.onrender.com/user/googlelogin', { idToken });
-            Cookies.set('token', result.data.token);
+            const result = await signInWithPopup(auth, googleProvider);
+            const idToken = await result.user.getIdToken();
+
+            const response = await axios.post(`${api}/user/googlelogin`, { idToken });
+
+            Cookies.set('token', response.data.token);
             navigate('/landingPage');
         } catch (error) {
-            console.error(error.message);
+            console.error("Error during Google sign-up:", error);
+            alert('Error signing up with Google');
         }
     };
 
