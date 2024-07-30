@@ -7,8 +7,8 @@ import Cookies from 'js-cookie';
 import { auth, googleProvider } from '../../fireBase/firebase'
 import { signInWithPopup } from "firebase/auth";
 
-// const api = process.env.REACT_APP_API
-const api = 'http://localhost:4000'
+const api = process.env.REACT_APP_API
+// const api = 'http://localhost:4000'
 
 const Login = () => {
     const [email, setEmail] = useState('');
